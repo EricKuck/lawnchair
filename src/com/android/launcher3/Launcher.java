@@ -2412,12 +2412,19 @@ public class Launcher extends StatefulActivity<LauncherState>
     @Override
     public void bindScreens(IntArray orderedScreenIds) {
         mWorkspace.mPageIndicator.setAreScreensBinding(true);
-        int firstScreenPosition = 0;
         if (FeatureFlags.topQsbOnFirstScreenEnabled(this) &&
-                orderedScreenIds.indexOf(Workspace.FIRST_SCREEN_ID) != firstScreenPosition) {
+                orderedScreenIds.indexOf(Workspace.HIDDEN_LEFT_SCREEN_ID) != 0) {
+            orderedScreenIds.removeValue(Workspace.HIDDEN_LEFT_SCREEN_ID);
+            orderedScreenIds.add(0, Workspace.HIDDEN_LEFT_SCREEN_ID);
+        }
+
+        if (FeatureFlags.topQsbOnFirstScreenEnabled(this) &&
+            orderedScreenIds.indexOf(Workspace.FIRST_SCREEN_ID) != 1) {
             orderedScreenIds.removeValue(Workspace.FIRST_SCREEN_ID);
-            orderedScreenIds.add(firstScreenPosition, Workspace.FIRST_SCREEN_ID);
-        } else if (!FeatureFlags.topQsbOnFirstScreenEnabled(this) && orderedScreenIds.isEmpty()) {
+            orderedScreenIds.add(1, Workspace.FIRST_SCREEN_ID);
+        }
+        
+        if (!FeatureFlags.topQsbOnFirstScreenEnabled(this) && orderedScreenIds.isEmpty()) {
             // If there are no screens, we need to have an empty screen
             mWorkspace.addExtraEmptyScreens();
         }
@@ -2469,7 +2476,7 @@ public class Launcher extends StatefulActivity<LauncherState>
         int count = orderedScreenIds.size();
         for (int i = 0; i < count; i++) {
             int screenId = orderedScreenIds.get(i);
-            if (FeatureFlags.topQsbOnFirstScreenEnabled(this) && screenId == Workspace.FIRST_SCREEN_ID) {
+            if (FeatureFlags.topQsbOnFirstScreenEnabled(this) && (screenId == Workspace.HIDDEN_LEFT_SCREEN_ID || screenId == Workspace.FIRST_SCREEN_ID)) {
                 // No need to bind the first screen, as its always bound.
                 continue;
             }
@@ -2926,7 +2933,7 @@ public class Launcher extends StatefulActivity<LauncherState>
 
         int currentPage = pagesBoundFirst != null && !pagesBoundFirst.isEmpty()
                 ? mWorkspace.getPageIndexForScreenId(pagesBoundFirst.getArray().get(0))
-                : PagedView.INVALID_PAGE;
+                : Workspace.DEFAULT_PAGE;
         // When undoing the removal of the last item on a page, return to that page.
         // Since we are just resetting the current page without user interaction,
         // override the previous page so we don't log the page switch.

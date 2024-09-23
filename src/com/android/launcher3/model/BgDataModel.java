@@ -155,6 +155,7 @@ public class BgDataModel {
             }
         }
         if (FeatureFlags.topQsbOnFirstScreenEnabled(LawnchairApp.getInstance()) || screenSet.isEmpty()) {
+            screenSet.add(Workspace.HIDDEN_LEFT_SCREEN_ID);
             screenSet.add(Workspace.FIRST_SCREEN_ID);
         }
         return screenSet.getArray();

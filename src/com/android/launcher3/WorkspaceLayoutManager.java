@@ -40,6 +40,8 @@ public interface WorkspaceLayoutManager {
     IntSet EXTRA_EMPTY_SCREEN_IDS =
             IntSet.wrap(EXTRA_EMPTY_SCREEN_ID, EXTRA_EMPTY_SCREEN_SECOND_ID);
 
+    // Hidden left screen. It is always present, even if its empty.
+    int HIDDEN_LEFT_SCREEN_ID = -1;
     // The is the first screen. It is always present, even if its empty.
     int FIRST_SCREEN_ID = 0;
     // This is the second page. On two panel home it is always present, even if its empty.

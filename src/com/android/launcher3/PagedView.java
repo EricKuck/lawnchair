@@ -176,7 +176,7 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         mIsRtl = Utilities.isRtl(getResources());
 
         mScroller = new OverScroller(context, SCROLL);
-        mCurrentPage = 0;
+        mCurrentPage = Workspace.DEFAULT_PAGE;
         mCurrentScrollOverPage = 0;
 
         final ViewConfiguration configuration = ViewConfiguration.get(context);

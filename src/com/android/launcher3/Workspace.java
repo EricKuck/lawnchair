@@ -180,7 +180,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
 
     private static final int ADJACENT_SCREEN_DROP_DURATION = 300;
 
-    public static final int DEFAULT_PAGE = 0;
+    public static final int DEFAULT_PAGE = 1;
 
     private int mAllAppsIconSize;
 
@@ -674,6 +674,9 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
             return;
         }
 
+        // Add hidden left page
+        insertNewWorkspaceScreen(Workspace.HIDDEN_LEFT_SCREEN_ID, getChildCount());
+
         // Add the first page
         CellLayout firstPage = insertNewWorkspaceScreen(Workspace.FIRST_SCREEN_ID, getChildCount());
         // Always add a QSB on the first screen.
@@ -1074,10 +1077,12 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
             return EXTRA_EMPTY_SCREEN_SECOND_ID;
         } else if (screenId == EXTRA_EMPTY_SCREEN_SECOND_ID) {
             return EXTRA_EMPTY_SCREEN_ID;
-        } else if (screenId % 2 == 0) {
-            return screenId + 1;
+            // TODO: (ERIC) might need to put this back after hiding the left screen
+//        } else if (screenId % 2 == 0) {
+//            return screenId + 1;
         } else {
-            return screenId - 1;
+//            return screenId - 1;
+            return screenId;
         }
     }
 
