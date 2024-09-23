@@ -303,6 +303,9 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
      * because that page is the current page.
      */
     public int getLeftmostVisiblePageForIndex(int pageIndex) {
+        if (pageIndex == 1) {
+            return pageIndex;
+        }
         int panelCount = getPanelCount();
         return pageIndex - pageIndex % panelCount;
     }

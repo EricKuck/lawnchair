@@ -2348,6 +2348,7 @@ public class Launcher extends StatefulActivity<LauncherState>
         // Double check that actual screenIds contains the visibleId, as empty screens
         // are hidden
         // in single panel.
+        
         if (actualIds.contains(firstId)) {
             result.add(firstId);
             if (mDeviceProfile.isTwoPanels && actualIds.contains(pairId)) {
@@ -2476,6 +2477,7 @@ public class Launcher extends StatefulActivity<LauncherState>
         int count = orderedScreenIds.size();
         for (int i = 0; i < count; i++) {
             int screenId = orderedScreenIds.get(i);
+            // TODO: (ERIC) probably not right?
             if (FeatureFlags.topQsbOnFirstScreenEnabled(this) && (screenId == Workspace.HIDDEN_LEFT_SCREEN_ID || screenId == Workspace.FIRST_SCREEN_ID)) {
                 // No need to bind the first screen, as its always bound.
                 continue;
