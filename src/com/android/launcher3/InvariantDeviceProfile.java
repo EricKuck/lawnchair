@@ -345,7 +345,7 @@ public class InvariantDeviceProfile {
                         // device has profiles supporting both phone and table modes
                         return TYPE_MULTI_DISPLAY;
                 } else if (type == flagTablet) {
-                        return TYPE_TABLET;
+                        return TYPE_MULTI_DISPLAY;
                 } else {
                         return TYPE_PHONE;
                 }
