@@ -26,7 +26,7 @@ allprojects {
         android {
             compileSdk 35
             defaultConfig {
-                minSdk 26
+                minSdk 33
                 targetSdk 34
                 vectorDrawables.useSupportLibrary = true
             }
@@ -243,7 +243,7 @@ android {
 
         withQuickstep {
             dimension "recents"
-            minSdk 26
+            minSdk 33
         }
 
         github {
