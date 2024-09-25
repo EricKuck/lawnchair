@@ -108,6 +108,7 @@ public class SwipePipToHomeAnimator extends RectFSpringAnim {
      * @param shadowRadius Shadow radius in pixel value for PiP window
      * @param view Attached view for logging purpose
      */
+    // ERIC - passing false cause idk
     private SwipePipToHomeAnimator(@NonNull Context context,
             int taskId,
             @NonNull ActivityInfo activityInfo,
@@ -153,7 +154,7 @@ public class SwipePipToHomeAnimator extends RectFSpringAnim {
             // to other classes like PipTaskOrganizer / RecentsAnimationController to complete
             // the cleanup.
             mPipContentOverlay = new PipContentOverlay.PipAppIconOverlay(view.getContext(),
-                    mAppBounds, new IconProvider(context).getIcon(mActivityInfo),
+                    mAppBounds, new IconProvider(context).getIcon(mActivityInfo, false),
                     appIconSizePx);
             final SurfaceControl.Transaction tx = new SurfaceControl.Transaction();
             mPipContentOverlay.attach(tx, mLeash);

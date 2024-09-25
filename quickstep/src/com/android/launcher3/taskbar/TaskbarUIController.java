@@ -43,7 +43,6 @@ import com.android.quickstep.views.TaskView.TaskIdAttributeContainer;
 import com.android.systemui.shared.recents.model.Task;
 
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Stream;
 
@@ -272,7 +271,7 @@ public class TaskbarUIController {
                     recents.confirmSplitSelect(
                             null /* containerTaskView */,
                             null /* task */,
-                            new BitmapDrawable(info.bitmap.icon),
+                            new BitmapDrawable(info.systemBitmap.icon),
                             startingView,
                             null /* thumbnail */,
                             intent,

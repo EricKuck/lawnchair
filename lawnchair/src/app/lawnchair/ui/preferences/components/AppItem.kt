@@ -43,7 +43,7 @@ fun AppItem(
 ) {
     AppItem(
         label = app.label,
-        icon = app.icon,
+        icon = app.systemIcon,
         onClick = { onClick(app) },
         widget = widget,
     )

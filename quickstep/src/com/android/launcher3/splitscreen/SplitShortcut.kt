@@ -56,12 +56,12 @@ T : ActivityContext? {
             when (mItemInfo) {
                 is WorkspaceItemInfo -> {
                     val workspaceItemInfo = mItemInfo
-                    bitmap = workspaceItemInfo.bitmap.icon
+                    bitmap = workspaceItemInfo.systemBitmap.icon
                     intent = workspaceItemInfo.intent
                 }
                 is com.android.launcher3.model.data.AppInfo -> {
                     val appInfo = mItemInfo
-                    bitmap = appInfo.bitmap.icon
+                    bitmap = appInfo.systemBitmap.icon
                     intent = appInfo.intent
                 }
                 else -> {

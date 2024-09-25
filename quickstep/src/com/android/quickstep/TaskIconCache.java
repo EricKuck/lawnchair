@@ -146,6 +146,7 @@ public class TaskIconCache implements DisplayInfoChangeListener {
                 .removeAll(key -> pkg.equals(key.getPackageName()) && handle.getIdentifier() == key.userId));
     }
 
+    // ERIC - assuming false cause no idea
     @WorkerThread
     private TaskCacheEntry getCacheEntry(Task task) {
         TaskCacheEntry entry = mIconCache.getAndInvalidateIfModified(task.key);
@@ -175,7 +176,7 @@ public class TaskIconCache implements DisplayInfoChangeListener {
                     key.getComponent(), key.userId);
             if (activityInfo != null) {
                 BitmapInfo bitmapInfo = getBitmapInfo(
-                        mIconProvider.getIcon(activityInfo),
+                        mIconProvider.getIcon(activityInfo, false),
                         key.userId,
                         desc.getPrimaryColor(),
                         activityInfo.applicationInfo.isInstantApp());

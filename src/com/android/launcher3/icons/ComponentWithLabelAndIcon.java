@@ -33,7 +33,7 @@ public interface ComponentWithLabelAndIcon extends ComponentWithLabel {
     /**
      * Provide an icon for this object
      */
-    Drawable getFullResIcon(IconCache cache);
+    Drawable getFullResIcon(IconCache cache, boolean tinted);
 
     class ComponentWithIconCachingLogic extends ComponentCachingLogic<ComponentWithLabelAndIcon> {
 
@@ -44,14 +44,15 @@ public interface ComponentWithLabelAndIcon extends ComponentWithLabel {
         @NonNull
         @Override
         public BitmapInfo loadIcon(@NonNull Context context,
-                @NonNull ComponentWithLabelAndIcon object) {
+                                   @NonNull ComponentWithLabelAndIcon object,
+                                   boolean tinted) {
             Drawable d = object.getFullResIcon(LauncherAppState.getInstance(context)
-                    .getIconCache());
+                .getIconCache(), tinted);
             if (d == null) {
-                return super.loadIcon(context, object);
+                return super.loadIcon(context, object, tinted);
             }
             try (LauncherIcons li = LauncherIcons.obtain(context)) {
-                return li.createBadgedIconBitmap(d, Process.myUserHandle (), false);
+                return li.createBadgedIconBitmap(d, Process.myUserHandle(), false);
             }
         }
     }

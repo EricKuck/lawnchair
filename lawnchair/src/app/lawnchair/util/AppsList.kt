@@ -63,13 +63,15 @@ fun appsState(
 class App(context: Context, private val info: LauncherActivityInfo) {
 
     val label get() = info.label.toString()
-    val icon: Bitmap
+    val systemIcon: Bitmap
+    val tintedIcon: Bitmap?
     val key = ComponentKey(info.componentName, info.user)
 
     init {
         val appInfo = AppInfo(context, info, info.user)
         LauncherAppState.getInstance(context).iconCache.getTitleAndIcon(appInfo, false)
-        icon = appInfo.bitmap.icon
+        systemIcon = appInfo.systemBitmap.icon
+        tintedIcon = appInfo.tintedBitmap?.icon
     }
 }
 

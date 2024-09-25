@@ -132,7 +132,8 @@ public class WorkspaceItemInfo extends ItemInfoWithIcon {
                 .put(Favorites.RESTORED, status);
 
         if (!usingLowResIcon()) {
-            writer.putIcon(bitmap, user);
+            writer.putIcon(systemBitmap, user);
+            // TODO ERIC - add the tinted one too
         }
     }
 

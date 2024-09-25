@@ -81,6 +81,7 @@ import java.util.stream.Stream;
 
 import app.lawnchair.icons.LawnchairIconProvider;
 
+// TODO ERIC - this whole file needs support for tinted
 /**
  * Cache of application icons. Icons can be made from any thread.
  */
@@ -93,8 +94,8 @@ public class IconCache extends BaseIconCache {
 
     private static final String TAG = "Launcher.IconCache";
 
-    private final Predicate<ItemInfoWithIcon> mIsUsingFallbackOrNonDefaultIconCheck = w -> w.bitmap != null
-            && (w.bitmap.isNullOrLowRes() || !isDefaultIcon(w.bitmap, w.user));
+    private final Predicate<ItemInfoWithIcon> mIsUsingFallbackOrNonDefaultIconCheck = w -> w.systemBitmap != null
+            && (w.systemBitmap.isNullOrLowRes() || !isDefaultIcon(w.systemBitmap, w.user));
 
     private final CachingLogic<ComponentWithLabel> mComponentWithLabelCachingLogic;
     private final CachingLogic<LauncherActivityInfo> mLauncherActivityInfoCachingLogic;
@@ -229,7 +230,7 @@ public class IconCache extends BaseIconCache {
         CacheEntry entry = cacheLocked(application.componentName,
                 application.user, () -> null, mLauncherActivityInfoCachingLogic,
                 false, application.usingLowResIcon());
-        if (entry.bitmap != null && !isDefaultIcon(entry.bitmap, application.user)) {
+        if (entry.systemBitmap != null && !isDefaultIcon(entry.systemBitmap, application.user)) {
             applyCacheEntry(entry, application);
         }
     }
@@ -257,23 +258,30 @@ public class IconCache extends BaseIconCache {
      */
     public <T extends ItemInfoWithIcon> void getShortcutIcon(T info, ShortcutInfo si,
             @NonNull Predicate<T> fallbackIconCheck) {
-        BitmapInfo bitmapInfo = cacheLocked(ShortcutKey.fromInfo(si).componentName,
-                si.getUserHandle(), () -> si, mShortcutCachingLogic, false, false).bitmap;
-        if (bitmapInfo.isNullOrLowRes()) {
-            bitmapInfo = getDefaultIcon(si.getUserHandle());
+        CacheEntry cacheEntry = cacheLocked(ShortcutKey.fromInfo(si).componentName,
+            si.getUserHandle(), () -> si, mShortcutCachingLogic, false, false);
+        BitmapInfo systemBitmapInfo = cacheEntry.systemBitmap;
+        if (systemBitmapInfo.isNullOrLowRes()) {
+            systemBitmapInfo = getDefaultIcon(si.getUserHandle());
         }
 
-        if (isDefaultIcon(bitmapInfo, si.getUserHandle()) && fallbackIconCheck.test(info)) {
+        if (isDefaultIcon(systemBitmapInfo, si.getUserHandle()) && fallbackIconCheck.test(info)) {
             return;
         }
-        info.bitmap = bitmapInfo.withBadgeInfo(getShortcutInfoBadge(si));
+
+        info.systemBitmap = systemBitmapInfo.withBadgeInfo(getShortcutInfoBadge(si));
+
+        BitmapInfo tintedBitmapInfo = cacheEntry.tintedBitmap;
+        if (tintedBitmapInfo != null && !tintedBitmapInfo.isNullOrLowRes()) {
+            info.tintedBitmap = tintedBitmapInfo.withBadgeInfo(getShortcutInfoBadge(si));
+        }
     }
 
     /**
      * Returns the badging info for the shortcut
      */
     public BitmapInfo getShortcutInfoBadge(ShortcutInfo shortcutInfo) {
-        return getShortcutInfoBadgeItem(shortcutInfo).bitmap;
+        return getShortcutInfoBadgeItem(shortcutInfo).systemBitmap;
     }
 
     @VisibleForTesting
@@ -315,7 +323,7 @@ public class IconCache extends BaseIconCache {
         // then
         // we should still look in the cache for restored app icons.
         if (info.getTargetComponent() == null) {
-            info.bitmap = getDefaultIcon(info.user);
+            info.systemBitmap = getDefaultIcon(info.user);
             info.title = "";
             info.contentDescription = "";
         } else {
@@ -388,7 +396,7 @@ public class IconCache extends BaseIconCache {
                         Log.i(TAG,
                                 "Skipping Item info with null component name: "
                                         + iconRequest.itemInfo);
-                        iconRequest.itemInfo.bitmap = getDefaultIcon(
+                        iconRequest.itemInfo.systemBitmap = getDefaultIcon(
                                 iconRequest.itemInfo.user);
                         return false;
                     }
@@ -461,45 +469,43 @@ public class IconCache extends BaseIconCache {
         for (ComponentName cn : duplicateIconRequestsMap.keySet()) {
             IconRequestInfo<T> iconRequestInfo = duplicateIconRequestsMap.get(cn).get(0);
             ItemInfoWithIcon itemInfo = iconRequestInfo.itemInfo;
-            BitmapInfo icon = itemInfo.bitmap;
+            BitmapInfo systemBitmap = itemInfo.systemBitmap;
+            BitmapInfo tintedBitmap = itemInfo.tintedBitmap;
             boolean loadFallbackTitle = TextUtils.isEmpty(itemInfo.title);
-            boolean loadFallbackIcon = icon == null
-                    || isDefaultIcon(icon, itemInfo.user)
-                    || icon == BitmapInfo.LOW_RES_INFO;
+            boolean loadFallbackSystemIcon = systemBitmap == null
+                    || isDefaultIcon(systemBitmap, itemInfo.user)
+                    || systemBitmap == BitmapInfo.LOW_RES_INFO;
 
-            if (loadFallbackTitle || loadFallbackIcon) {
+            if (loadFallbackTitle || loadFallbackSystemIcon) {
                 Log.i(TAG,
-                        "Database bulk icon loading failed, using fallback bulk icon loading "
-                                + "for: " + cn);
-                CacheEntry entry = new CacheEntry();
+                    "Database bulk icon loading failed, using fallback bulk icon loading "
+                        + "for: " + cn);
+                
                 LauncherActivityInfo lai = iconRequestInfo.launcherActivityInfo;
 
-                // Fill fields that are not updated below so they are not subsequently
-                // deleted.
-                entry.title = itemInfo.title;
-                if (icon != null) {
-                    entry.bitmap = icon;
-                }
+                CacheEntry entry = new CacheEntry();
                 entry.contentDescription = itemInfo.contentDescription;
 
-                if (loadFallbackIcon) {
-                    loadFallbackIcon(
-                            lai,
-                            entry,
-                            mLauncherActivityInfoCachingLogic,
-                            /* usePackageIcon= */ false,
-                            /* usePackageTitle= */ loadFallbackTitle,
-                            cn,
-                            sectionKey.first);
-                }
+                entry.title = itemInfo.title;
                 if (loadFallbackTitle && TextUtils.isEmpty(entry.title) && lai != null) {
                     loadFallbackTitle(
-                            lai,
-                            entry,
-                            mLauncherActivityInfoCachingLogic,
-                            sectionKey.first);
+                        lai,
+                        entry,
+                        mLauncherActivityInfoCachingLogic,
+                        sectionKey.first);
                 }
 
+                entry.systemBitmap = systemBitmap;
+                entry.tintedBitmap = tintedBitmap;
+                if (loadFallbackSystemIcon) {
+                    loadFallbackIcon(
+                        lai,
+                        entry,
+                        mLauncherActivityInfoCachingLogic,
+                        cn,
+                        sectionKey.first);
+                }
+                
                 for (IconRequestInfo<T> iconRequest : duplicateIconRequestsMap.get(cn)) {
                     applyCacheEntry(entry, iconRequest.itemInfo);
                 }
@@ -526,7 +532,7 @@ public class IconCache extends BaseIconCache {
         infoInOut.contentDescription = mPackageManager.getUserBadgedLabel(infoInOut.title, infoInOut.user);
         final BitmapInfo cachedBitmap = mWidgetCategoryBitmapInfos.get(infoInOut.widgetCategory);
         if (cachedBitmap != null) {
-            infoInOut.bitmap = getBadgedIcon(cachedBitmap, infoInOut.user);
+            infoInOut.systemBitmap = getBadgedIcon(cachedBitmap, infoInOut.user);
             return;
         }
 
@@ -535,7 +541,7 @@ public class IconCache extends BaseIconCache {
                     mContext.getDrawable(widgetSection.mSectionDrawable),
                     Process.myUserHandle(), false);
             mWidgetCategoryBitmapInfos.put(infoInOut.widgetCategory, tempBitmap);
-            infoInOut.bitmap = getBadgedIcon(tempBitmap, infoInOut.user);
+            infoInOut.systemBitmap = getBadgedIcon(tempBitmap, infoInOut.user);
         } catch (Exception e) {
             Log.e(TAG, "Error initializing bitmap for icons with widget category", e);
         }
@@ -554,16 +560,17 @@ public class IconCache extends BaseIconCache {
             @NonNull final ItemInfoWithIcon info) {
         info.title = Utilities.trim(entry.title);
         info.contentDescription = entry.contentDescription;
-        info.bitmap = entry.bitmap;
-        if (entry.bitmap == null) {
+        info.systemBitmap = entry.systemBitmap;
+        info.tintedBitmap = entry.tintedBitmap;
+        if (entry.systemBitmap == null) {
             // TODO: entry.bitmap can never be null, so this should not happen at all.
             Log.wtf(TAG, "Cannot find bitmap from the cache, default icon was loaded.");
-            info.bitmap = getDefaultIcon(info.user);
+            info.systemBitmap = getDefaultIcon(info.user);
         }
     }
 
-    public Drawable getFullResIcon(LauncherActivityInfo info) {
-        return mIconProvider.getIcon(info, mIconDpi);
+    public Drawable getFullResIcon(LauncherActivityInfo info, boolean tinted) {
+        return mIconProvider.getIcon(info, mIconDpi, tinted);
     }
 
     public void updateSessionCache(PackageUserKey key, PackageInstaller.SessionInfo info) {

@@ -247,6 +247,7 @@ public class DatabaseWidgetPreviewLoader {
         return builder.bounds;
     }
 
+    // ERIC - passing false cause maybe?
     private Bitmap generateShortcutPreview(
             ShortcutConfigActivityInfo info, int maxWidth, int maxHeight) {
         int iconSize = ActivityContext.lookupContext(mContext).getDeviceProfile().allAppsIconSizePx;
@@ -263,7 +264,7 @@ public class DatabaseWidgetPreviewLoader {
             LauncherIcons li = LauncherIcons.obtain(mContext);
             Drawable icon = li.createBadgedIconBitmap(
                     mutateOnMainThread(info.getFullResIcon(
-                            LauncherAppState.getInstance(mContext).getIconCache())), Process.myUserHandle (), false)
+                            LauncherAppState.getInstance(mContext).getIconCache(), false)), Process.myUserHandle (), false)
                     .newIcon(mContext);
             li.recycle();
 

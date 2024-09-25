@@ -433,7 +433,8 @@ public class PreviewItemManager {
             drawable.setLevel(item.getProgressLevel());
             p.drawable = drawable;
         } else {
-            p.drawable = item.newIcon(mContext);
+            // TODO: this _appears_ to be for icons in a folder, which we want tinted. unsure tho.
+            p.drawable = item.newIcon(mContext, true);
         }
         p.drawable.setBounds(0, 0, mIconSize, mIconSize);
         p.item = item;

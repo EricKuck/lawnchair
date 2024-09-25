@@ -63,7 +63,7 @@ public interface ComponentWithLabel {
 
         @NonNull
         @Override
-        public BitmapInfo loadIcon(@NonNull Context context, @NonNull T object) {
+        public BitmapInfo loadIcon(@NonNull Context context, @NonNull T object, boolean tinted) {
             return BitmapInfo.LOW_RES_INFO;
         }
 

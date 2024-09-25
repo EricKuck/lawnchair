@@ -722,7 +722,7 @@ public class LauncherModel extends LauncherApps.Callback implements InstallSessi
             writer.println(prefix + "All apps list: size=" + mBgAllAppsList.data.size());
             for (AppInfo info : mBgAllAppsList.data) {
                 writer.println(prefix + "   title=\"" + info.title
-                        + "\" bitmapIcon=" + info.bitmap.icon
+                        + "\" bitmapIcon=" + info.systemBitmap.icon
                         + " componentName=" + info.componentName.getPackageName());
             }
             writer.println();

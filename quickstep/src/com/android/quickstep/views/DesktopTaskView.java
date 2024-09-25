@@ -234,13 +234,14 @@ public class DesktopTaskView extends TaskView {
                 STAGE_POSITION_UNDEFINED);
     }
 
+    // ERIC - no clue??
     private IconView createIconView(Task task) {
         IconView iconView = new IconView(mContext);
         PackageManager pm = mContext.getApplicationContext().getPackageManager();
         try {
             IconProvider provider = new IconProvider(mContext);
             Drawable appIcon = provider.getIcon(pm.getActivityInfo(task.topActivity,
-                    PackageManager.ComponentInfoFlags.of(0)));
+                    PackageManager.ComponentInfoFlags.of(0)), false);
             iconView.setDrawable(appIcon);
         } catch (PackageManager.NameNotFoundException e) {
             Log.w(TAG, "Package not found: " + task.topActivity.getPackageName(), e);

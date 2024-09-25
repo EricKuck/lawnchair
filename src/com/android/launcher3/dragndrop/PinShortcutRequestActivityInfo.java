@@ -87,7 +87,7 @@ public class PinShortcutRequestActivityInfo extends ShortcutConfigActivityInfo {
     }
 
     @Override
-    public Drawable getFullResIcon(IconCache cache) {
+    public Drawable getFullResIcon(IconCache cache, boolean tinted) {
         Drawable d = mContext.getSystemService(LauncherApps.class)
                 .getShortcutIconDrawable(mInfo, LauncherAppState.getIDP(mContext).fillResIconDpi);
         if (d == null) {

@@ -37,6 +37,7 @@ import com.android.launcher3.model.data.WorkspaceItemInfo;
 
 public class PinRequestHelper {
 
+    // ERIC - passing true here cause i _think_ WorkspaceItemInfo is for home screens??
     /**
      * request.accept() will initiate the following flow:
      *      -> go-to-system-process for actual processing (a)
@@ -77,7 +78,7 @@ public class PinRequestHelper {
             WorkspaceItemInfo info = new WorkspaceItemInfo(si, context);
             // Apply the unbadged icon synchronously using the caching logic directly and
             // fetch the actual icon asynchronously.
-            info.bitmap = new ShortcutCachingLogic().loadIcon(context, si);
+            info.systemBitmap = new ShortcutCachingLogic().loadIcon(context, si, true);
             LauncherAppState.getInstance(context).getModel().updateAndBindWorkspaceItem(info, si);
             return info;
         } else {

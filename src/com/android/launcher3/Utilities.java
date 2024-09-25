@@ -677,6 +677,7 @@ public final class Utilities {
         return icon;
     }
 
+    // ERIC - I _think_ this is for when you start dragging an app around? passing in true here since we want that tinted
     public static Drawable loadFullDrawableWithoutTheme(Context context, ItemInfo info,
             int width, int height, Object[] outObj) {
         ActivityContext activity = ActivityContext.lookupContext(context);
@@ -684,7 +685,7 @@ public final class Utilities {
         if (info instanceof PendingAddShortcutInfo) {
             ShortcutConfigActivityInfo activityInfo = ((PendingAddShortcutInfo) info).getActivityInfo(context);
             outObj[0] = activityInfo;
-            return activityInfo.getFullResIcon(appState.getIconCache());
+            return activityInfo.getFullResIcon(appState.getIconCache(), true);
         }
         if (info.itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION) {
             LauncherActivityInfo activityInfo = context.getSystemService(LauncherApps.class)
@@ -693,7 +694,7 @@ public final class Utilities {
             return activityInfo == null ? null
                     : LauncherAppState.getInstance(context)
                             .getIconProvider().getIcon(
-                                    activityInfo, activity.getDeviceProfile().inv.fillResIconDpi);
+                                    activityInfo, activity.getDeviceProfile().inv.fillResIconDpi, true);
         } else if (info.itemType == LauncherSettings.Favorites.ITEM_TYPE_DEEP_SHORTCUT) {
             List<ShortcutInfo> si = ShortcutKey.fromItemInfo(info)
                     .buildRequest(context)
@@ -715,7 +716,7 @@ public final class Utilities {
             return icon;
         } else if (info.itemType == LauncherSettings.Favorites.ITEM_TYPE_SEARCH_ACTION
                 && info instanceof ItemInfoWithIcon) {
-            return ((ItemInfoWithIcon) info).bitmap.newIcon(context);
+            return ((ItemInfoWithIcon) info).systemBitmap.newIcon(context);
         } else {
             return null;
         }

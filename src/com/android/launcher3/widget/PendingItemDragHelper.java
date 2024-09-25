@@ -97,6 +97,7 @@ public class PendingItemDragHelper extends DragPreviewProvider {
         }
     }
 
+    // ERIC - no clue what this does, assuming false
     /**
      * Starts the drag for the pending item associated with the view.
      *
@@ -191,7 +192,7 @@ public class PendingItemDragHelper extends DragPreviewProvider {
         } else {
             PendingAddShortcutInfo createShortcutInfo = (PendingAddShortcutInfo) mAddInfo;
             Drawable icon = createShortcutInfo.getActivityInfo(launcher)
-                    .getFullResIcon(app.getIconCache());
+                    .getFullResIcon(app.getIconCache(), false);
             LauncherIcons li = LauncherIcons.obtain(launcher);
             preview = new FastBitmapDrawable(
                     li.createScaledBitmapWithoutShadow(icon, true));

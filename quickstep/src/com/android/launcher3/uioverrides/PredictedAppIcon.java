@@ -16,7 +16,6 @@
 package com.android.launcher3.uioverrides;
 
 import static com.android.app.animation.Interpolators.ACCELERATE_DECELERATE;
-import static com.android.launcher3.icons.BitmapInfo.FLAG_THEMED;
 import static com.android.launcher3.icons.FastBitmapDrawable.getDisabledColorFilter;
 
 import android.animation.Animator;
@@ -182,7 +181,7 @@ public class PredictedAppIcon extends DoubleShadowBubbleTextView {
         // Create the slot machine animation first, since it uses the current icon to
         // start.
         Animator slotMachineAnim = animate
-                ? createSlotMachineAnim(Collections.singletonList(info.bitmap), false)
+                ? createSlotMachineAnim(Collections.singletonList(info.systemBitmap), false)
                 : null;
         super.applyFromWorkspaceItem(info, animate, staggerIndex);
         int oldPlateColor = mPlateColor;

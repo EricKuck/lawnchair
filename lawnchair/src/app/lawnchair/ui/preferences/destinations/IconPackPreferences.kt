@@ -74,7 +74,6 @@ import app.lawnchair.ui.preferences.components.layout.Chip
 import app.lawnchair.ui.preferences.components.layout.NestedScrollStretch
 import app.lawnchair.ui.preferences.components.layout.PreferenceGroup
 import app.lawnchair.ui.preferences.components.layout.PreferenceLayout
-import app.lawnchair.util.Constants
 import app.lawnchair.util.getThemedIconPacksInstalled
 import app.lawnchair.util.isPackageInstalled
 import com.android.launcher3.R
@@ -208,9 +207,7 @@ fun IconPackPreferences(
                         PreferenceGroup {
                             val themedIconsAvailable = packageManager
                                 .getThemedIconPacksInstalled(LocalContext.current)
-                                .any { packageManager.isPackageInstalled(it) } ||
-                                packageManager
-                                    .isPackageInstalled(Constants.LAWNICONS_PACKAGE_NAME)
+                                .any { packageManager.isPackageInstalled(it) }
 
                             if (themedIconsAvailable && themedIconsAdapter.state.value) {
                                 IconPackGrid(

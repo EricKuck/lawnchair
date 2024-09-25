@@ -162,7 +162,8 @@ public class SearchActionItemInfo extends ItemInfoWithIcon {
     public WorkspaceItemInfo createWorkspaceItem(LauncherModel model) {
         WorkspaceItemInfo info = new WorkspaceItemInfo();
         info.title = title;
-        info.bitmap = bitmap;
+        info.systemBitmap = systemBitmap;
+        info.tintedBitmap = tintedBitmap;
         info.intent = mIntent;
 
         if (hasFlags(FLAG_SHOULD_START_FOR_RESULT)) {
@@ -177,7 +178,8 @@ public class SearchActionItemInfo extends ItemInfoWithIcon {
                     PackageItemInfo pkgInfo = new PackageItemInfo(getIntentPackageName(), user);
                     app.getIconCache().getTitleAndIconForApp(pkgInfo, false);
                     try (LauncherIcons li = LauncherIcons.obtain(app.getContext())) {
-                        info.bitmap = li.badgeBitmap(info.bitmap.icon, pkgInfo.bitmap);
+                        // TODO ERIC tinted
+                        info.systemBitmap = li.badgeBitmap(info.systemBitmap.icon, pkgInfo.systemBitmap);
                     }
                     return info;
                 });

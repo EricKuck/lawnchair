@@ -58,7 +58,6 @@ import com.patrykmichalik.opto.core.PreferenceExtensionsKt;
 import java.net.URISyntaxException;
 import java.security.InvalidParameterException;
 
-import app.lawnchair.LawnchairApp;
 import app.lawnchair.preferences2.PreferenceManager2;
 
 /**
@@ -187,7 +186,8 @@ public class LoaderCursor extends CursorWrapper {
         info.title = getTitle();
         // the fallback icon
         if (!loadIcon(info)) {
-            info.bitmap = mIconCache.getDefaultIcon(info.user);
+            // TODO ERIC tinted
+            info.systemBitmap = mIconCache.getDefaultIcon(info.user);
         }
 
         // TODO: If there's an explicit component and we can't install that, delete it.
@@ -364,7 +364,7 @@ public class LoaderCursor extends CursorWrapper {
 
         if (loadIcon) {
             mIconCache.getTitleAndIcon(info, mActivityInfo, useLowResIcon);
-            if (mIconCache.isDefaultIcon(info.bitmap, user)) {
+            if (mIconCache.isDefaultIcon(info.systemBitmap, user)) {
                 loadIcon(info);
             }
         }

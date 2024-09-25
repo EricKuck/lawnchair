@@ -70,10 +70,10 @@ fun PreferencesDashboard(
     ) {
         AnnouncementPreference()
 
-        if (BuildConfig.DEBUG) {
-            PreferencesDebugWarning()
-            Spacer(modifier = Modifier.height(16.dp))
-        }
+//        if (BuildConfig.DEBUG) {
+//            PreferencesDebugWarning()
+//            Spacer(modifier = Modifier.height(16.dp))
+//        }
 
         if (!context.isDefaultLauncher()) {
             PreferencesSetDefaultLauncherWarning()

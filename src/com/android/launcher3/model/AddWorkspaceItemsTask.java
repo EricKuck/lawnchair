@@ -181,7 +181,8 @@ public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
 
                         WorkspaceItemInfo wii = (WorkspaceItemInfo) itemInfo;
                         wii.title = "";
-                        wii.bitmap = app.getIconCache().getDefaultIcon(item.user);
+                        wii.systemBitmap = app.getIconCache().getDefaultIcon(item.user);
+                        wii.tintedBitmap = app.getIconCache().getDefaultIcon(item.user); // TODO ERIC - absolutely not
                         app.getIconCache().getTitleAndIcon(wii,
                                 ((WorkspaceItemInfo) itemInfo).usingLowResIcon());
                     }

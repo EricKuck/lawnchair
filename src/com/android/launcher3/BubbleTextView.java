@@ -42,6 +42,7 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.TextUtils.TruncateAt;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.Property;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -102,6 +103,7 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
     private static final int DISPLAY_WORKSPACE = 0;
     public static final int DISPLAY_ALL_APPS = 1;
     private static final int DISPLAY_FOLDER = 2;
+    private static final int DISPLAY_SHORTCUT_POPUP = 4;
     protected static final int DISPLAY_TASKBAR = 5;
     public static final int DISPLAY_SEARCH_RESULT = 6;
     public static final int DISPLAY_SEARCH_RESULT_SMALL = 7;
@@ -344,6 +346,7 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
         }
     }
 
+    // ERIC: THIS IS FOR HOME SCREEN PAGES
     @UiThread
     public void applyFromWorkspaceItem(WorkspaceItemInfo info, PreloadIconDrawable icon) {
         applyIconAndLabel(info);
@@ -353,6 +356,7 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
         setDownloadStateContentDescription(info, info.getProgressLevel());
     }
 
+    // ERIC: THIS IS FOR THE DRAWER
     @UiThread
     public void applyFromApplicationInfo(AppInfo info) {
         applyIconAndLabel(info);
@@ -370,6 +374,7 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
         setDownloadStateContentDescription(info, info.getProgressLevel());
     }
 
+    // ERIC: THIS IS FOR SEARCH
     /**
      * Apply label and tag using a generic {@link ItemInfoWithIcon}
      */
@@ -392,7 +397,8 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
     @UiThread
     protected void applyIconAndLabel(ItemInfoWithIcon info) {
         boolean useTheme = shouldUseTheme();
-        FastBitmapDrawable iconDrawable = info.newIcon(getContext(), useTheme);
+        boolean tinted = mDisplay == DISPLAY_WORKSPACE || mDisplay == DISPLAY_SHORTCUT_POPUP || mDisplay == DISPLAY_FOLDER;
+        FastBitmapDrawable iconDrawable = info.newIcon(getContext(), useTheme, tinted);
         mDotParams.appColor = iconDrawable.getIconColor();
         mDotParams.color = IconPalette.getMutedColor(iconDrawable.getIconColor(), 0.54f);
         setIcon(iconDrawable);
@@ -1087,7 +1093,11 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
             mEnableIconUpdateAnimation = true;
 
             // Optimization: Starting in N, pre-uploads the bitmap to RenderThread.
-            info.bitmap.icon.prepareToDraw();
+            if ((mDisplay == DISPLAY_WORKSPACE || mDisplay == DISPLAY_SHORTCUT_POPUP || mDisplay == DISPLAY_FOLDER) && info.tintedBitmap != null) {
+                info.tintedBitmap.icon.prepareToDraw();
+            } else {
+                info.systemBitmap.icon.prepareToDraw();
+            }
 
             if (info instanceof AppInfo) {
                 applyFromApplicationInfo((AppInfo) info);

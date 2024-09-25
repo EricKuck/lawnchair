@@ -757,6 +757,7 @@ public class SplitSelectStateController {
             SystemUiProxy.INSTANCE.get(mLauncher).registerSplitSelectListener(mSplitSelectListener);
         }
 
+        // ERIC - passing false cause idk
         /**
          * Enter split select from desktop mode.
          * @param taskInfo the desktop task to move to split stage
@@ -771,7 +772,7 @@ public class SplitSelectStateController {
             IconProvider provider = new IconProvider(mLauncher.getApplicationContext());
             try {
                 mAppIcon = provider.getIcon(pm.getActivityInfo(mTaskInfo.baseActivity,
-                     PackageManager.ComponentInfoFlags.of(0)));
+                     PackageManager.ComponentInfoFlags.of(0)), false);
             } catch (PackageManager.NameNotFoundException e) {
                 Log.w(TAG, "Package not found: " + packageName, e);
             }

@@ -46,8 +46,6 @@ import com.android.launcher3.icons.IconCache.ItemInfoUpdateReceiver;
 import com.android.launcher3.model.data.ItemInfoWithIcon;
 import com.android.launcher3.model.data.LauncherAppWidgetInfo;
 import com.android.launcher3.model.data.PackageItemInfo;
-import com.android.launcher3.touch.ItemClickHandler;
-import com.android.launcher3.util.Themes;
 
 import java.util.List;
 
@@ -143,13 +141,14 @@ public class PendingAppWidgetHostView extends LauncherAppWidgetHostView
         mDrawableSizeChanged = true;
     }
 
+    // ERIC - passing false cause it seems maybe right
     @Override
     public void reapplyItemInfo(ItemInfoWithIcon info) {
         if (mCenterDrawable != null) {
             mCenterDrawable.setCallback(null);
             mCenterDrawable = null;
         }
-        if (info.bitmap.icon != null) {
+        if (info.systemBitmap.icon != null) {
             Drawable widgetCategoryIcon = getWidgetCategoryIcon();
             // The view displays three modes,
             //   1) App icon in the center
@@ -157,7 +156,7 @@ public class PendingAppWidgetHostView extends LauncherAppWidgetHostView
             //   3) App icon in the center with a setup icon on the top left corner.
             if (mDisabledForSafeMode) {
                 if (widgetCategoryIcon == null) {
-                    FastBitmapDrawable disabledIcon = info.newIcon(getContext());
+                    FastBitmapDrawable disabledIcon = info.newIcon(getContext(), false);
                     disabledIcon.setIsDisabled(true);
                     mCenterDrawable = disabledIcon;
                 } else {
@@ -167,10 +166,10 @@ public class PendingAppWidgetHostView extends LauncherAppWidgetHostView
                 mSettingIconDrawable = null;
             } else if (isReadyForClickSetup()) {
                 mCenterDrawable = widgetCategoryIcon == null
-                        ? info.newIcon(getContext())
+                        ? info.newIcon(getContext(), false)
                         : widgetCategoryIcon;
                 mSettingIconDrawable = getResources().getDrawable(R.drawable.ic_setting).mutate();
-                updateSettingColor(info.bitmap.color);
+                updateSettingColor(info.systemBitmap.color);
             } else {
                 mCenterDrawable = widgetCategoryIcon == null
                         ? newPendingIcon(getContext(), info)
@@ -342,6 +341,6 @@ public class PendingAppWidgetHostView extends LauncherAppWidgetHostView
         if (mInfo.pendingItemInfo.widgetCategory == WidgetSections.NO_CATEGORY) {
             return null;
         }
-        return mInfo.pendingItemInfo.newIcon(getContext());
+        return mInfo.pendingItemInfo.newIcon(getContext(), false);
     }
 }

@@ -151,7 +151,7 @@ public final class WidgetsListHeader extends LinearLayout implements ItemInfoUpd
     @UiThread
     public void applyFromItemInfoWithIcon(WidgetsListHeaderEntry entry) {
         PackageItemInfo info = entry.mPkgItem;
-        setIcon(info.newIcon(getContext()));
+        setIcon(info.newIcon(getContext(), false));
         setTitles(entry);
         setExpanded(entry.isWidgetListShown());
 
@@ -207,9 +207,9 @@ public final class WidgetsListHeader extends LinearLayout implements ItemInfoUpd
             mEnableIconUpdateAnimation = true;
 
             // Optimization: Starting in N, pre-uploads the bitmap to RenderThread.
-            info.bitmap.icon.prepareToDraw();
+            info.systemBitmap.icon.prepareToDraw();
 
-            setIcon(info.newIcon(getContext()));
+            setIcon(info.newIcon(getContext(), false));
 
             mEnableIconUpdateAnimation = false;
         }

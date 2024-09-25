@@ -72,9 +72,10 @@ public class ShortcutCachingLogic implements CachingLogic<ShortcutInfo> {
         return TextUtils.isEmpty(label) ? fallback : label;
     }
 
+    // ERIC - is this supposed to use the tint field for something??
     @NonNull
     @Override
-    public BitmapInfo loadIcon(@NonNull Context context, @NonNull ShortcutInfo info) {
+    public BitmapInfo loadIcon(@NonNull Context context, @NonNull ShortcutInfo info, boolean tinted) {
         try (LauncherIcons li = LauncherIcons.obtain(context)) {
             Drawable unbadgedDrawable = ShortcutCachingLogic.getIcon(
                     context, info, LauncherAppState.getIDP(context).fillResIconDpi);

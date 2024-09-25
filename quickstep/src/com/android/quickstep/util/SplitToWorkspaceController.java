@@ -104,13 +104,13 @@ public class SplitToWorkspaceController {
             final WorkspaceItemInfo workspaceItemInfo = (WorkspaceItemInfo) tag;
             intent = workspaceItemInfo.intent;
             user = workspaceItemInfo.user;
-            bitmapInfo = workspaceItemInfo.bitmap;
+            bitmapInfo = workspaceItemInfo.systemBitmap;
         } else if (tag instanceof com.android.launcher3.model.data.AppInfo) {
             final com.android.launcher3.model.data.AppInfo appInfo =
                     (com.android.launcher3.model.data.AppInfo) tag;
             intent = appInfo.intent;
             user = appInfo.user;
-            bitmapInfo = appInfo.bitmap;
+            bitmapInfo = appInfo.systemBitmap;
         } else {
             return false;
         }

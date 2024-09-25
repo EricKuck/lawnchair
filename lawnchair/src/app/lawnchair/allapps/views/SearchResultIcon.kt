@@ -161,7 +161,7 @@ class SearchResultIcon(context: Context, attrs: AttributeSet?) :
             isVisible = false
             return
         }
-        icon = appInfo.newIcon(context, false)
+        icon = appInfo.newIcon(context, false, false)
     }
 
     private fun bindFromApp(componentName: ComponentName, user: UserHandle) {
@@ -205,7 +205,7 @@ class SearchResultIcon(context: Context, attrs: AttributeSet?) :
 
             val packageIcon = getPackageIcon(target.packageName, target.userHandle)
 
-            info.bitmap = when {
+            info.systemBitmap = when {
                 info.hasFlags(SearchActionItemInfo.FLAG_PRIMARY_ICON_FROM_TITLE) ->
                     li.createIconBitmap("${info.title}", packageIcon.color)
                 icon == null -> packageIcon
@@ -217,14 +217,15 @@ class SearchResultIcon(context: Context, attrs: AttributeSet?) :
                     val componentName =
                         ComponentName(target.packageName, target.extras.getString("class")!!)
                     val activityInfo = context.packageManager.getActivityInfo(componentName, 0)
-                    val activityIcon = iconProvider.getIcon(activityInfo)
+                    val activityIcon = iconProvider.getIcon(activityInfo, false)
                     val bitmap = li.createIconBitmap(activityIcon, 1f, iconSize)
                     val bitmapInfo = BitmapInfo.of(bitmap, packageIcon.color)
-                    info.bitmap = li.badgeBitmap(info.bitmap.icon, bitmapInfo)
+                    info.systemBitmap = li.badgeBitmap(info.systemBitmap.icon, bitmapInfo)
+                    info.tintedBitmap = info.tintedBitmap?.let { li.badgeBitmap(it.icon, bitmapInfo) }
                 } catch (_: PackageManager.NameNotFoundException) {
                 }
-            } else if (info.hasFlags(SearchActionItemInfo.FLAG_BADGE_WITH_PACKAGE) && info.bitmap != packageIcon) {
-                info.bitmap = li.badgeBitmap(info.bitmap.icon, packageIcon)
+            } else if (info.hasFlags(SearchActionItemInfo.FLAG_BADGE_WITH_PACKAGE) && info.systemBitmap != packageIcon) {
+                info.systemBitmap = li.badgeBitmap(info.systemBitmap.icon, packageIcon)
             }
         }
     }
@@ -234,7 +235,7 @@ class SearchResultIcon(context: Context, attrs: AttributeSet?) :
         val info = PackageItemInfo(packageName, user)
         info.user = user
         las.iconCache.getTitleAndIcon(info, false)
-        return info.bitmap
+        return info.systemBitmap
     }
 
     override fun onLongClick(v: View): Boolean {

@@ -92,7 +92,7 @@ public class AppPairsController {
         MODEL_EXECUTOR.execute(() -> {
             newAppPair.contents.forEach(member -> {
                 member.title = "";
-                member.bitmap = iconCache.getDefaultIcon(newAppPair.user);
+                member.systemBitmap = iconCache.getDefaultIcon(newAppPair.user);
                 iconCache.getTitleAndIcon(member, member.usingLowResIcon());
             });
             MAIN_EXECUTOR.execute(() -> {

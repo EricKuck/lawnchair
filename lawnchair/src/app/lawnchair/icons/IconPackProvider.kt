@@ -41,19 +41,18 @@ class IconPackProvider(private val context: Context) {
         return iconPack.getClock(iconEntry)
     }
 
-    fun getDrawable(iconEntry: IconEntry, iconDpi: Int, user: UserHandle): Drawable? {
+    fun getDrawable(iconEntry: IconEntry, iconDpi: Int, user: UserHandle, tinted: Boolean): Drawable? {
         val iconPack = getIconPackOrSystem(iconEntry.packPackageName) ?: return null
         iconPack.loadBlocking()
         val packageManager = context.packageManager
         val drawable = iconPack.getIcon(iconEntry, iconDpi) ?: return null
-        val shouldTintBackgrounds = context.shouldTintIconPackBackgrounds()
         val clockMetadata =
             if (user == Process.myUserHandle()) iconPack.getClock(iconEntry) else null
         try {
             if (clockMetadata != null) {
                 val clockDrawable: ClockDrawableWrapper =
                     ClockDrawableWrapper.forMeta(Build.VERSION.SDK_INT, clockMetadata) {
-                        if (shouldTintBackgrounds) {
+                        if (tinted) {
                             wrapThemedData(
                                 packageManager,
                                 iconEntry,
@@ -63,7 +62,7 @@ class IconPackProvider(private val context: Context) {
                             drawable
                         }
                     }
-                return if (shouldTintBackgrounds && context.shouldTransparentBGIcons()) {
+                return if (tinted && context.shouldTransparentBGIcons()) {
                     clockDrawable.foreground
                 } else {
                     CustomAdaptiveIconDrawable(
@@ -76,7 +75,7 @@ class IconPackProvider(private val context: Context) {
             // Ignore
         }
 
-        if (shouldTintBackgrounds) {
+        if (tinted) {
             return wrapThemedData(packageManager, iconEntry, drawable)
         }
         return drawable

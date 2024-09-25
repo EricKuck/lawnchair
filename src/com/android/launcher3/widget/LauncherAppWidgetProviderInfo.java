@@ -234,7 +234,7 @@ public class LauncherAppWidgetProviderInfo extends AppWidgetProviderInfo
     }
 
     @Override
-    public Drawable getFullResIcon(IconCache cache) {
+    public Drawable getFullResIcon(IconCache cache, boolean tinted) {
         return cache.getFullResIcon(provider.getPackageName(), icon);
     }
 }

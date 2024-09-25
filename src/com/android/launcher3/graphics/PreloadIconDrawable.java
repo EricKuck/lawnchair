@@ -124,7 +124,7 @@ public class PreloadIconDrawable extends FastBitmapDrawable {
     public PreloadIconDrawable(ItemInfoWithIcon info, Context context) {
         this(
                 info,
-                IconPalette.getPreloadProgressColor(context, info.bitmap.color),
+                IconPalette.getPreloadProgressColor(context, info.systemBitmap.color),
                 getPreloadColors(context),
                 Utilities.isDarkTheme(context),
                 GraphicsUtils.getShapePath(context, DEFAULT_PATH_SIZE));
@@ -136,7 +136,7 @@ public class PreloadIconDrawable extends FastBitmapDrawable {
             int[] preloadColors,
             boolean isDarkMode,
             Path shapePath) {
-        super(info.bitmap);
+        super(info.systemBitmap);
         mItem = info;
         mShapePath = shapePath;
         mScaledTrackPath = new Path();
@@ -150,7 +150,7 @@ public class PreloadIconDrawable extends FastBitmapDrawable {
         mIndicatorColor = indicatorColor;
 
         // This is the color
-        int primaryIconColor = mItem.bitmap.color;
+        int primaryIconColor = mItem.systemBitmap.color;
 
         // Progress color
         float[] m3HCT = new float[3];

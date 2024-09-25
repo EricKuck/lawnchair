@@ -79,7 +79,8 @@ public class IconRequestInfo<T extends ItemInfoWithIcon> {
             if (iconBlob == null) {
                 return false;
             }
-            info.bitmap = li.createIconBitmap(decodeByteArray(
+            // TODO ERIC tinted
+            info.systemBitmap = li.createIconBitmap(decodeByteArray(
                     iconBlob, 0, iconBlob.length));
             return true;
         } catch (Exception e) {

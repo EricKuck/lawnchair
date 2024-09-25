@@ -39,8 +39,14 @@ public abstract class ItemInfoWithIcon extends ItemInfo {
     /**
      * The bitmap for the application icon
      */
-    public BitmapInfo bitmap = BitmapInfo.LOW_RES_INFO;
+    public BitmapInfo systemBitmap = BitmapInfo.LOW_RES_INFO;
 
+    /**
+     * The bitmap for the application icon
+     */
+    @Nullable
+    public BitmapInfo tintedBitmap = null;
+    
     /**
      * Indicates that the icon is disabled due to safe mode restrictions.
      */
@@ -142,7 +148,8 @@ public abstract class ItemInfoWithIcon extends ItemInfo {
 
     protected ItemInfoWithIcon(ItemInfoWithIcon info) {
         super(info);
-        bitmap = info.bitmap;
+        systemBitmap = info.systemBitmap;
+        tintedBitmap = info.tintedBitmap;
         mProgressLevel = info.mProgressLevel;
         runtimeStatusFlags = info.runtimeStatusFlags;
         user = info.user;
@@ -157,7 +164,7 @@ public abstract class ItemInfoWithIcon extends ItemInfo {
      * Indicates whether we're using a low res icon
      */
     public boolean usingLowResIcon() {
-        return bitmap.isLowRes();
+        return systemBitmap.isLowRes();
     }
 
     /**
@@ -241,16 +248,17 @@ public abstract class ItemInfoWithIcon extends ItemInfo {
     /**
      * Returns a FastBitmapDrawable with the icon.
      */
-    public FastBitmapDrawable newIcon(Context context) {
-        return newIcon(context, PreferenceManager.getInstance(context).getThemedIcons().get());
+    public FastBitmapDrawable newIcon(Context context, boolean tinted) {
+        return newIcon(context, PreferenceManager.getInstance(context).getThemedIcons().get(), tinted);
     }
 
     /**
      * Returns a FastBitmapDrawable with the icon and context theme applied
      */
-    public FastBitmapDrawable newIcon(Context context, boolean applyTheme) {
+    public FastBitmapDrawable newIcon(Context context, boolean applyTheme, boolean tinted) {
+        BitmapInfo bitmapInfo = (tinted && tintedBitmap != null) ? tintedBitmap : systemBitmap;
         FastBitmapDrawable drawable = applyTheme
-                ? bitmap.newThemedIcon(context) : bitmap.newIcon(context);
+                ? bitmapInfo.newThemedIcon(context) : bitmapInfo.newIcon(context);
         drawable.setIsDisabled(isDisabled());
         return drawable;
     }

@@ -79,7 +79,7 @@ public abstract class ShortcutConfigActivityInfo implements ComponentWithLabelAn
     }
 
     @Override
-    public abstract Drawable getFullResIcon(IconCache cache);
+    public abstract Drawable getFullResIcon(IconCache cache, boolean tinted);
 
     /**
      * Return a WorkspaceItemInfo, if it can be created directly on drop, without requiring any
@@ -130,8 +130,8 @@ public abstract class ShortcutConfigActivityInfo implements ComponentWithLabelAn
         }
 
         @Override
-        public Drawable getFullResIcon(IconCache cache) {
-            return cache.getFullResIcon(mInfo);
+        public Drawable getFullResIcon(IconCache cache, boolean tinted) {
+            return cache.getFullResIcon(mInfo, tinted);
         }
 
         @Override

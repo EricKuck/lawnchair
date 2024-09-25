@@ -71,7 +71,7 @@ public class AppPairIcon extends FrameLayout implements DraggableView {
 
         // TODO (jeremysim b/274189428): Replace this placeholder icon
         WorkspaceItemInfo placeholder = new WorkspaceItemInfo();
-        placeholder.newIcon(icon.getContext());
+        placeholder.newIcon(icon.getContext(), false);
         icon.mAppPairName.applyFromWorkspaceItem(placeholder);
 
         icon.mAppPairName.setText(appPairInfo.title);
