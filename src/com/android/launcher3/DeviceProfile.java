@@ -218,6 +218,7 @@ public class DeviceProfile {
     public int numShownHotseatIcons;
     public int hotseatCellHeightPx;
     public final boolean areNavButtonsInline;
+    public final int hotseatTwoPanelPadding;
     // In portrait: size = height, in landscape: size = width
     public int hotseatBarSizePx;
     public int hotseatBarBottomSpacePx;
@@ -430,6 +431,7 @@ public class DeviceProfile {
 
         edgeMarginPx = res.getDimensionPixelSize(R.dimen.dynamic_grid_edge_margin);
         workspaceContentScale = res.getFloat(R.dimen.workspace_content_scale);
+        hotseatTwoPanelPadding = res.getDimensionPixelSize(R.dimen.hotseat_two_panel_padding);
 
         gridVisualizationPaddingX = res.getDimensionPixelSize(
                 R.dimen.grid_visualization_horizontal_cell_spacing);
@@ -546,11 +548,9 @@ public class DeviceProfile {
         isQsbInline = mIsScalableGrid && inv.inlineQsb[mTypeIndex] && canQsbInline;
 
         areNavButtonsInline = isTaskbarPresent && !isGestureMode;
-        numShownHotseatIcons =
-                isTwoPanels ? inv.numDatabaseHotseatIcons : inv.numShownHotseatIcons;
+        numShownHotseatIcons = inv.numShownHotseatIcons;
 
-        numShownAllAppsColumns =
-                isTwoPanels ? inv.numDatabaseAllAppsColumns : inv.numAllAppsColumns;
+        numShownAllAppsColumns = isTwoPanels ? inv.numAllAppsColumns + 2 : inv.numAllAppsColumns;
 
         int hotseatBarBottomSpace = !isQsbEnable ? 0 : pxFromDp(inv.hotseatBarBottomSpace[mTypeIndex], mMetrics);
         int minQsbMargin = res.getDimensionPixelSize(R.dimen.min_qsb_margin);
@@ -1854,7 +1854,8 @@ public class DeviceProfile {
                 startSpacing = inlineNavButtonsEndSpacingPx;
                 endSpacing = availableWidthPx - hotseatWidth - startSpacing + hotseatBorderSpace;
             } else {
-                startSpacing = (availableWidthPx - hotseatWidth) / 2;
+                int padding = isTwoPanels ? (hotseatTwoPanelPadding * numShownHotseatIcons) : 0;
+                startSpacing = (availableWidthPx - padding - hotseatWidth) / 2;
                 endSpacing = startSpacing;
             }
             startSpacing += getAdditionalQsbSpace();
