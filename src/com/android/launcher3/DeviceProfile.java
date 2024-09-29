@@ -88,7 +88,7 @@ import app.lawnchair.theme.color.ColorOption;
 public class DeviceProfile {
 
     private static final int DEFAULT_DOT_SIZE = 100;
-    private static final float ALL_APPS_TABLET_MAX_ROWS = 5.5f;
+    private static final float ALL_APPS_TABLET_MAX_ROWS = 6.5f;
     private static final float MIN_FOLDER_TEXT_SIZE_SP = 16f;
     private static final float MIN_WIDGET_PADDING_DP = 8f;
 
@@ -1460,12 +1460,12 @@ public class DeviceProfile {
         var allAppLeftRightMarginMultiplier = PreferenceExtensionsKt
                 .firstBlocking(preferenceManager2.getDrawerLeftRightMarginFactor());
         var marginMultiplier = allAppLeftRightMarginMultiplier * (!isTablet ? 100 : 2);
-        allAppsLeftRightMargin = (int) (allAppsLeftRightMargin * marginMultiplier);
+//        allAppsLeftRightMargin = (int) (allAppsLeftRightMargin * marginMultiplier);
         
         // todo fix how drawer padding values are calculated in responsive grid type
         int leftPadding = (int) (allAppsPadding.left != 0 ? allAppsPadding.left * marginMultiplier : marginMultiplier);
         int rightPadding = (int) (allAppsPadding.right != 0 ? allAppsPadding.right * marginMultiplier : marginMultiplier);
-        
+
         allAppsPadding.left = leftPadding;
         allAppsPadding.right = rightPadding;
     }
