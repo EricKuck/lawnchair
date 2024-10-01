@@ -36,11 +36,9 @@ public interface WorkspaceLayoutManager {
     int EXTRA_EMPTY_SCREEN_ID = -201;
     // The screen id used for the second empty screen always present at the end for two panel home.
     int EXTRA_EMPTY_SCREEN_SECOND_ID = -200;
-    // The screen id used for the second empty screen always present at the end for two panel home.
-    int EXTRA_EMPTY_SCREEN_FIRST_ID = -199;
     // The screen ids used for the empty screens at the end or beginning of the workspaces.
     IntSet EXTRA_EMPTY_SCREEN_IDS =
-            IntSet.wrap(EXTRA_EMPTY_SCREEN_ID, EXTRA_EMPTY_SCREEN_SECOND_ID, EXTRA_EMPTY_SCREEN_FIRST_ID);
+            IntSet.wrap(EXTRA_EMPTY_SCREEN_ID, EXTRA_EMPTY_SCREEN_SECOND_ID);
 
     // Hidden left screen. It is always present, even if its empty.
     int HIDDEN_LEFT_SCREEN_ID = -1;

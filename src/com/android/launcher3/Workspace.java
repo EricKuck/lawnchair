@@ -583,6 +583,22 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
     }
 
     @Override
+    protected boolean isVisible(int pageIndex) {
+        return (getLeftmostVisiblePageForIndex(pageIndex) == mCurrentPage) ||
+            (pageIndex == 1 && mCurrentPage == 0);
+    }
+
+    @Override
+    public int getLeftmostVisiblePageForIndex(int pageIndex) {
+        int panelCount = getPanelCount();
+        if (pageIndex < 2) {
+            return pageIndex;
+        }
+
+        return pageIndex - (pageIndex + 1) % panelCount;
+    }
+
+    @Override
     public int getPanelCount() {
         return isTwoPanelEnabled() ? 2 : super.getPanelCount();
     }
@@ -679,6 +695,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
 
         // Add the first page
         CellLayout firstPage = insertNewWorkspaceScreen(Workspace.FIRST_SCREEN_ID, getChildCount());
+
         // Always add a QSB on the first screen.
         if (mFirstPagePinnedItem == null) {
             SmartspaceMode smartspaceMode = PreferenceExtensionsKt
@@ -743,9 +760,6 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
             insertIndex = mScreenOrder.size();
         }
         
-        if (screenId == EXTRA_EMPTY_SCREEN_FIRST_ID) {
-            insertIndex = 0;
-        }
         insertNewWorkspaceScreen(screenId, insertIndex);
     }
 
@@ -857,7 +871,6 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
     private void forEachExtraEmptyPageId(Consumer<Integer> callback) {
         callback.accept(EXTRA_EMPTY_SCREEN_ID);
         if (isTwoPanelEnabled()) {
-            callback.accept(EXTRA_EMPTY_SCREEN_FIRST_ID);
             callback.accept(EXTRA_EMPTY_SCREEN_SECOND_ID);
         }
     }
@@ -983,7 +996,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
     }
 
     public boolean hasExtraEmptyScreens() {
-        return (mWorkspaceScreens.containsKey(EXTRA_EMPTY_SCREEN_ID) || mWorkspaceScreens.containsKey(EXTRA_EMPTY_SCREEN_FIRST_ID))
+        return (mWorkspaceScreens.containsKey(EXTRA_EMPTY_SCREEN_ID))
                 && getChildCount() > getPanelCount()
                 && (!isTwoPanelEnabled()
                         || mWorkspaceScreens.containsKey(EXTRA_EMPTY_SCREEN_SECOND_ID));
@@ -1078,24 +1091,12 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
      * two panel UI is enabled.
      */
     public int getScreenPair(int screenId) {
-        if (screenId == EXTRA_EMPTY_SCREEN_FIRST_ID) {
-            return HIDDEN_LEFT_SCREEN_ID;
-        }
         if (screenId == HIDDEN_LEFT_SCREEN_ID) {
-            return EXTRA_EMPTY_SCREEN_FIRST_ID;
-        }
-        if (screenId == EXTRA_EMPTY_SCREEN_ID) {
-            return EXTRA_EMPTY_SCREEN_SECOND_ID;
-        } else if (screenId == EXTRA_EMPTY_SCREEN_SECOND_ID) {
-            return EXTRA_EMPTY_SCREEN_ID;
-            // TODO: (ERIC) might need to put this back after hiding the left screen
-        } else if (screenId == FIRST_SCREEN_ID) {
-            return 1;
+            return HIDDEN_LEFT_SCREEN_ID;
         } else if (screenId % 2 == 0) {
             return screenId + 1;
         } else {
             return screenId - 1;
-//            return screenId;
         }
     }
 
@@ -1397,6 +1398,22 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
 
     public boolean hasOverlay() {
         return mOverlayEdgeEffect != null;
+    }
+
+    @Override
+    protected int calculateSnapPage(boolean snapToRight) {
+        int stepSize;
+        if (!isTwoPanelEnabled() || (mCurrentPage <= 2 && !snapToRight || mCurrentPage == 0)) {
+            stepSize = 1;
+        } else {
+            stepSize = 2;
+        }
+
+        if (snapToRight) {
+            return mCurrentPage + stepSize;
+        } else {
+            return mCurrentPage - stepSize;
+        }
     }
 
     @Override
@@ -3725,13 +3742,6 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         if (extraScreenId >= 0 && nScreens > 1) {
             if (page == extraScreenId) {
                 return getContext().getString(R.string.workspace_new_page);
-            }
-            nScreens--;
-        }
-        int prependedExtraScreenId = mScreenOrder.indexOf(EXTRA_EMPTY_SCREEN_FIRST_ID);
-        if (prependedExtraScreenId >= 0 && nScreens > 1) {
-            if (page == prependedExtraScreenId) {
-                return "I don't exist";
             }
             nScreens--;
         }

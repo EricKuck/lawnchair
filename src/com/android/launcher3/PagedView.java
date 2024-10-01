@@ -288,11 +288,6 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         newPage = ensureWithinScrollBounds(newPage);
         // Ensure that it is clamped by the actual set of children in all cases
         newPage = Utilities.boundToRange(newPage, 0, getPageCount() - 1);
-
-        if (getPanelCount() > 1) {
-            // Always return left most panel as new page
-            newPage = getLeftmostVisiblePageForIndex(newPage);
-        }
         return newPage;
     }
 
@@ -303,9 +298,6 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
      * because that page is the current page.
      */
     public int getLeftmostVisiblePageForIndex(int pageIndex) {
-        if (pageIndex == 1) {
-            return pageIndex;
-        }
         int panelCount = getPanelCount();
         return pageIndex - pageIndex % panelCount;
     }
@@ -390,7 +382,7 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
     /**
      * Returns true if the page with the given index is currently visible, false otherwise.
      */
-    private boolean isVisible(int pageIndex) {
+    protected boolean isVisible(int pageIndex) {
         return getLeftmostVisiblePageForIndex(pageIndex) == mCurrentPage;
     }
 
@@ -808,6 +800,7 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
             if (scrollLogic.shouldIncludeView(child)) {
                 ChildBounds bounds = mOrientationHandler.getChildBounds(child, childStart,
                     pageCenter, layoutChildren);
+
                 final int primaryDimension = bounds.primaryDimension;
                 final int childPrimaryEnd = bounds.childPrimaryEnd;
 
@@ -1406,15 +1399,12 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
 
                     if (((isSignificantMove && !isDeltaLeft && !isFling) ||
                             (isFling && !isVelocityLeft)) && mCurrentPage > 0) {
-                        finalPage = returnToOriginalPage
-                                ? mCurrentPage : mCurrentPage - getPanelCount();
+                        finalPage = returnToOriginalPage ? mCurrentPage : calculateSnapPage(false);
                         runOnPageScrollsInitialized(
                                 () -> snapToPageWithVelocity(finalPage, velocity));
                     } else if (((isSignificantMove && isDeltaLeft && !isFling) ||
-                            (isFling && isVelocityLeft)) &&
-                            mCurrentPage < getChildCount() - 1) {
-                        finalPage = returnToOriginalPage
-                                ? mCurrentPage : mCurrentPage + getPanelCount();
+                            (isFling && isVelocityLeft)) && mCurrentPage < getChildCount() - 1) {
+                        finalPage = returnToOriginalPage ? mCurrentPage : calculateSnapPage(true);
                         runOnPageScrollsInitialized(
                                 () -> snapToPageWithVelocity(finalPage, velocity));
                     } else {
@@ -1469,6 +1459,14 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         }
 
         return true;
+    }
+
+    protected int calculateSnapPage(boolean snapToRight) {
+        if (snapToRight) {
+            return mCurrentPage + getPanelCount();
+        } else {
+            return mCurrentPage - getPanelCount();
+        }
     }
 
     protected void onNotSnappingToPageInFreeScroll() { }
