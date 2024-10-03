@@ -25,6 +25,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.core.net.toUri
+import app.lawnchair.ui.preferences.navigation.NAV_URL_BASE
 import app.lawnchair.ui.theme.EdgeToEdge
 import app.lawnchair.ui.theme.LawnchairTheme
 
@@ -47,7 +48,7 @@ class PreferenceActivity : ComponentActivity() {
     companion object {
 
         fun createIntent(context: Context, destination: String): Intent {
-            val uri = "android-app://androidx.navigation/$destination".toUri()
+            val uri = "$NAV_URL_BASE/$destination".toUri()
             return Intent(Intent.ACTION_VIEW, uri, context, PreferenceActivity::class.java)
         }
     }

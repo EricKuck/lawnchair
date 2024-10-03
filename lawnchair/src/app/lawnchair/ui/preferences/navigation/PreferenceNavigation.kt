@@ -9,6 +9,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import androidx.navigation.navigation
 import app.lawnchair.backup.ui.CreateBackupScreen
 import app.lawnchair.backup.ui.restoreBackupGraph
@@ -80,7 +81,14 @@ fun InnerNavigation(
         }
 
         navigation(route = Routes.GENERAL, startDestination = "main") {
-            composable(route = "main") {
+            composable(
+                route = "main",
+                deepLinks = listOf(
+                    navDeepLink {
+                        uriPattern = "$NAV_URL_BASE/${Routes.GENERAL}"
+                    },
+                ),
+            ) {
                 GeneralPreferences()
             }
             composable(
@@ -110,8 +118,22 @@ fun InnerNavigation(
             composable(route = DockRoutes.SEARCH_PROVIDER) { SearchProviderPreferences() }
         }
 
-        composable(route = Routes.SMARTSPACE) { SmartspacePreferences(fromWidget = false) }
-        composable(route = Routes.SMARTSPACE_WIDGET) { SmartspacePreferences(fromWidget = true) }
+        composable(
+            route = Routes.SMARTSPACE,
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "$NAV_URL_BASE/${Routes.SMARTSPACE}"
+                },
+            ),
+        ) { SmartspacePreferences(fromWidget = false) }
+        composable(
+            route = Routes.SMARTSPACE_WIDGET,
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "$NAV_URL_BASE/${Routes.SMARTSPACE_WIDGET}"
+                },
+            ),
+        ) { SmartspacePreferences(fromWidget = true) }
 
         navigation(route = Routes.APP_DRAWER, startDestination = "main") {
             composable(route = "main") { AppDrawerPreferences() }
@@ -122,7 +144,14 @@ fun InnerNavigation(
         composable(route = Routes.FOLDERS) { FolderPreferences() }
 
         composable(route = Routes.GESTURES) { GesturePreferences() }
-        composable(route = Routes.PICK_APP_FOR_GESTURE) { PickAppForGesture() }
+        composable(
+            route = Routes.PICK_APP_FOR_GESTURE,
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "$NAV_URL_BASE/${Routes.PICK_APP_FOR_GESTURE}"
+                },
+            ),
+        ) { PickAppForGesture() }
 
         composable(route = Routes.QUICKSTEP) { QuickstepPreferences() }
 
@@ -136,6 +165,11 @@ fun InnerNavigation(
             arguments = listOf(
                 navArgument("packageName") { type = NavType.StringType },
                 navArgument("nameAndUser") { type = NavType.StringType },
+            ),
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "$NAV_URL_BASE/${Routes.SELECT_ICON}/{packageName}/{nameAndUser}/"
+                },
             ),
         ) { backStackEntry ->
             val args = backStackEntry.arguments!!
@@ -178,6 +212,8 @@ fun InnerNavigation(
         restoreBackupGraph(route = Routes.RESTORE_BACKUP)
     }
 }
+
+const val NAV_URL_BASE = "android-app://androidx.navigation"
 
 object Routes {
     const val GENERAL = "general"
