@@ -24,6 +24,7 @@ import androidx.lifecycle.viewModelScope
 import app.lawnchair.icons.CustomAdaptiveIconDrawable
 import app.lawnchair.ui.preferences.about.acknowledgements.OssLibrary
 import app.lawnchair.ui.preferences.destinations.IconPackInfo
+import app.lawnchair.util.Constants.LAWNICONS_PACKAGE_NAME
 import app.lawnchair.util.getPackageVersionCode
 import app.lawnchair.util.kotlinxJson
 import com.android.launcher3.R
@@ -85,13 +86,23 @@ class PreferenceViewModel(private val app: Application) : AndroidViewModel(app),
         val lawnchairIcon = CustomAdaptiveIconDrawable.wrapNonNull(
             ContextCompat.getDrawable(app, R.drawable.ic_launcher_home)!!,
         )
-        val defaultIconPack = listOf(
+        var defaultIconPack = listOf(
             IconPackInfo(
                 name = app.getString(R.string.system_icons),
                 packageName = "",
                 icon = lawnchairIcon,
             ),
         )
+        if (app.packageManager.getPackageVersionCode(LAWNICONS_PACKAGE_NAME) in 1..3) {
+            val info = app.packageManager.getApplicationInfo(LAWNICONS_PACKAGE_NAME, 0)
+            defaultIconPack = defaultIconPack + listOf(
+                IconPackInfo(
+                    name = pm.getApplicationLabel(info).toString(),
+                    packageName = info.packageName,
+                    icon = CustomAdaptiveIconDrawable.wrapNonNull(pm.getApplicationIcon(info)),
+                ),
+            )
+        }
         val withSystemIcons = defaultIconPack + themedIconPacks.sortedBy { it.name }
         emit(withSystemIcons)
     }
